@@ -18,7 +18,7 @@ Similarly, our pipeline expects MRI patch embeddings as .pth files. The format s
 
 TODO: include precomputed embeddings
 
-## Example Pipeline
+## Pipeline
 
 ### Required Metadata
 Training a model requires 3 .csvs and a splits directory.
@@ -29,7 +29,7 @@ Histology CSV: Links the case_id to the name of the associated WSIs (can be mult
 
 MRI CSV: Links the case_id to the name of the associated MRI study (tested with 1:1 pairing).
 
-See metadata for dummy examples.
+See metadata for examples.
 
 ### Training Model
 

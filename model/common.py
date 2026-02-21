@@ -23,7 +23,7 @@ def get_classifier(args):
     classification_loss = WeightedCombinedLosses(losses, weights)
     contrastive_loss = None
     if(args.model_type=='early-fusion_mamba'):
-        model = SequenceEarlyFusion(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
+        model = SequenceEarlyFusion(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='early-fusion_mlp'):
         model = LinearEarlyFusion(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
     # elif(args.model_type=='linear1h'):
@@ -31,17 +31,17 @@ def get_classifier(args):
     elif(args.model_type=='late-fusion3h_mlp'):
         model = LinearTripleHead(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
     elif(args.model_type=='late-fusion3h_mamba'):
-        model = MambaTripleHead(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
+        model = MambaTripleHead(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='logit-fusion_mamba'):
-        model = LogitLevelFusion(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
+        model = LogitLevelFusion(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='moe_mlp'):
-        model = MoE(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out,linear=True)
+        model = MoE(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out,n_layer=1, linear=True)
     elif(args.model_type=='moe_mamba'):
-        model = MoE(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out,linear=False)
+        model = MoE(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer, linear=False)
     elif(args.model_type=='histo_mamba'):
-        model = HistoOnlyMamba(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
+        model = HistoOnlyMamba(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='mri_mamba'):
-        model = MRIOnlyMamba(in_dim = 768, n_classes=args.n_class, dropout=args.drop_out)
+        model = MRIOnlyMamba(in_dim = 768, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='histo_mlp'):
         model = HistoMLP(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
     elif(args.model_type=='mri_mlp'):

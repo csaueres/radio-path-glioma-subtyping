@@ -55,10 +55,14 @@ def preload_mri_features(data_dir,samples,embedder='mm-dino',n_surround_slices=0
 	if(embedder=='none'):
 		return
 	elif(embedder=='mm-dino'):
-		handle = torch.load(os.path.join(data_dir,"daniel_tumor_embeds.pth"))
-
-		subjects = handle["id"]['train'] + handle["id"]['val']+ handle["id"]['test']
-		patch_and_tumor_embeds = torch.cat([handle["features"]['train'],handle["features"]['val'],handle["features"]['test']],dim=0)
+		handle = torch.load(os.path.join(data_dir,"mm-dino.pth"))
+		#possibly given in this format
+		try:
+			subjects = handle["id"]['train'] + handle["id"]['val']+ handle["id"]['test']
+			patch_and_tumor_embeds = torch.cat([handle["features"]['train'],handle["features"]['val'],handle["features"]['test']],dim=0)
+		except Exception as e:
+			subjects = handle["id"]
+			patch_and_tumor_embeds = handle["features"]
 		print("Shape:", patch_and_tumor_embeds.shape)
 		patch_features = patch_and_tumor_embeds[:,0:,:]
 		tumor_embeddings=torch.cat([patch_and_tumor_embeds[:,0,:],torch.mean(patch_features,dim=1)],dim=-1)

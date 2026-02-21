@@ -52,14 +52,14 @@ parser.add_argument('--histo_root_dir', type=str, default=None,
                     help='data directory')
 parser.add_argument('--mri_root_dir', type=str, default=None, 
                     help='data directory')
-parser.add_argument('--histo_embed_dim', type=int, default=1536)
+parser.add_argument('--histo_embed_dim', type=int, default=1536,help='size of the histology patch embeddings')
 parser.add_argument('--max_epochs', type=int, default=200,
                     help='maximum number of epochs to train (default: 200)')
-parser.add_argument('--n_block', type=int, default=12)
+parser.add_argument('--n_block', type=int, default=24,help='number of mamba blocks to include in the model')
 parser.add_argument('--lr', type=float, default=1e-4,
                     help='learning rate (default: 0.0001)')
-parser.add_argument('--reg', type=float, default=1e-5,
-                    help='weight decay (default: 1e-5)')
+parser.add_argument('--reg', type=float, default=0.01,
+                    help='weight decay (default: 0.01)')
 parser.add_argument('--seed', type=int, default=1, 
                     help='random seed for reproducible experiment (default: 1)')
 parser.add_argument('--k', type=int, default=5, help='number of folds (default: 5)')
@@ -72,14 +72,14 @@ parser.add_argument('--split_dir', type=str, default=None,
                     help='specify the directory storing the splits to use')
 parser.add_argument('--log_data', action='store_true', default=False, help='log data using tensorboard')
 parser.add_argument('--opt', type=str, choices = ['adam', 'sgd'], default='adam')
-parser.add_argument('--drop_out', type=float, default=0.25, help='dropout')
+parser.add_argument('--drop_out', type=float, default=0.5, help='dropout')
 parser.add_argument('--model_type', type=str, default='moe-mamba', 
-                    help='type of model')
+                    help='type of model. see common for options')
 parser.add_argument('--mri_embedder', type=str, default='mm-dino', 
                     help='currently only mm-dino supported')
 parser.add_argument('--exp_code', type=str, help='experiment code for saving results')
 parser.add_argument('--weighted_sample', action='store_true', default=False, help='enable weighted sampling')
-parser.add_argument('--task', type=str)
+parser.add_argument('--task', type=str,default='idh_1p19q_class', help='classification task to perform.')
 parser.add_argument('--patch_frac',type=float,default=1.0,help='what fraction of random patches to use for each image for training')
 parser.add_argument('--mri_context_width',type=int,default=0,help='how many additional slices to include on each side of the center slice (0 is only center slice)')
 parser.add_argument('--load_data_in_mem', action='store_true', default=False, help='whether to load all Histo Features in memory (requires 100GB+ RAM)')

@@ -8,7 +8,7 @@ from utils.utils import device
 
 
 class MoE(nn.Module):
-    def __init__(self, in_dim, n_classes, dropout,linear):
+    def __init__(self, in_dim, n_classes, dropout, n_layer, linear):
         super().__init__()
         self.multi_out=True
         self.linear = linear
@@ -26,8 +26,8 @@ class MoE(nn.Module):
             self.histo_expert=nn.Sequential(nn.ReLU(),nn.Linear(self.shared_size, self.expert_out_dim))
             self.mri_expert=nn.Sequential(nn.ReLU(),nn.Linear(self.shared_size, self.expert_out_dim))
         else:
-            self.histo_expert=nn.Sequential(nn.Linear(self.shared_size, self.expert_out_dim), MambaMIL(self.expert_out_dim, dropout,n_layer=12))
-            self.mri_expert=nn.Sequential(nn.Linear(self.shared_size, self.expert_out_dim), MambaMIL(self.expert_out_dim, dropout,n_layer=12))
+            self.histo_expert=nn.Sequential(nn.Linear(self.shared_size, self.expert_out_dim), MambaMIL(self.expert_out_dim, dropout,n_layer/2))
+            self.mri_expert=nn.Sequential(nn.Linear(self.shared_size, self.expert_out_dim), MambaMIL(self.expert_out_dim, dropout,n_layer/2))
         self.h_norm = nn.BatchNorm1d(self.expert_out_dim)
         self.m_norm = nn.BatchNorm1d(self.expert_out_dim)
         self.router = nn.Sequential(

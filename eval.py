@@ -125,7 +125,7 @@ parser.add_argument('--mri_context_width',type=int,default=0,help='number of add
 parser.add_argument('--model_type', type=str,default="moe-mamba")
 parser.add_argument('--mri_embedder', type=str, default='mm-dino', 
                     help='currently only mm-dino supported')
-parser.add_argument('--n_heads', type=int, default=1, help='number of heads')
+parser.add_argument('--n_heads', type=int, default=1, help='How many output scenarios to evaluate model on. Use 1 for unimodal models and 3 for bimodal models.')
 parser.add_argument('--load_data_in_mem', action='store_true', default=False, help='whether to load all Histo Features in memory (requires 100GB+ RAM)')
 args = parser.parse_args()
 

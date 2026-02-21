@@ -7,7 +7,7 @@ from model.modules.MambaMIL import MambaMIL
 #TODO: make these compatible with unimodal datasets
 
 class UnimodalModel(nn.Module):
-    def __init__(self, in_dim, n_classes, dropout):
+    def __init__(self, in_dim, n_classes, dropout, n_layer):
         super().__init__()
         self.multi_out=False
         self.hidden_dim=64
@@ -26,18 +26,18 @@ class UnimodalModel(nn.Module):
         return logits, {'unimodal_attn':self.expert.get_last_attn()}
 
 class HistoOnlyMamba(UnimodalModel):
-    def __init__(self, in_dim, n_classes, dropout):
+    def __init__(self, in_dim, n_classes, dropout, n_layer):
         super().__init__(in_dim, n_classes, dropout)
-        self.expert = MambaMIL(self.hidden_dim, dropout,n_layer=24)
+        self.expert = MambaMIL(self.hidden_dim, dropout,n_layer)
    
     def forward(self,histo_x,mri_x):
         return super().forward(histo_x)
 
 
 class MRIOnlyMamba(UnimodalModel):
-    def __init__(self, in_dim, n_classes, dropout):
+    def __init__(self, in_dim, n_classes, dropout, n_layer):
         super().__init__(in_dim, n_classes, dropout)
-        self.expert = MambaMIL(self.hidden_dim, dropout,n_layer=24)
+        self.expert = MambaMIL(self.hidden_dim, dropout,n_layer)
    
     def forward(self,histo_x,mri_x):
         return super().forward(mri_x)
