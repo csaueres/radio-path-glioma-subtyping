@@ -1,18 +1,13 @@
 import argparse
-import pdb
 import os
-import math
+import numpy as np
 import torch
 
 # internal imports
-from dataio.ops import save_pkl, load_pkl
-# from utils.utils import *
 from model.common import train
 from model.evaluation import ResultsTracker
 from dataio.mm_dataset import get_dataset
 
-import pandas as pd
-import numpy as np
 
 
 def main(args):
@@ -20,10 +15,6 @@ def main(args):
     if not os.path.isdir(args.results_dir):
         os.mkdir(args.results_dir)
 
-    all_val_auc = []
-    all_val_acc = []
-    all_val_ba = []
-    all_val_mcc = []
     folds = np.arange(args.k_start, args.k)
     results_tracker = ResultsTracker(["Model","Fold","Accuracy","GBM Acc.", "Astro Acc.", "Oligo Acc.", "AUC","BA","MCC"])
     for i in folds:
@@ -53,6 +44,7 @@ parser.add_argument('--histo_root_dir', type=str, default=None,
 parser.add_argument('--mri_root_dir', type=str, default=None, 
                     help='data directory')
 parser.add_argument('--histo_embed_dim', type=int, default=1536,help='size of the histology patch embeddings')
+parser.add_argument('--mri_embed_dim', type=int, default=1536,help='size of the MRI patch/slice embeddings')
 parser.add_argument('--max_epochs', type=int, default=200,
                     help='maximum number of epochs to train (default: 200)')
 parser.add_argument('--n_block', type=int, default=24,help='number of mamba blocks to include in the model')
@@ -75,8 +67,8 @@ parser.add_argument('--opt', type=str, choices = ['adam', 'sgd'], default='adam'
 parser.add_argument('--drop_out', type=float, default=0.5, help='dropout')
 parser.add_argument('--model_type', type=str, default='moe-mamba', 
                     help='type of model. see common for options')
-parser.add_argument('--mri_embedder', type=str, default='mm-dino', 
-                    help='currently only mm-dino supported')
+parser.add_argument('--mri_embedder', type=str, default='default', 
+                    help='options=[default,]. Different preprocessing pipelines for different MRI encoders.')
 parser.add_argument('--exp_code', type=str, help='experiment code for saving results')
 parser.add_argument('--weighted_sample', action='store_true', default=False, help='enable weighted sampling')
 parser.add_argument('--task', type=str,default='idh_1p19q_class', help='classification task to perform.')
@@ -107,10 +99,9 @@ settings = {'experiment': args.exp_code,
             'results_dir': args.results_dir, 
             'lr': args.lr,
             'reg': args.reg,
-            'label_frac': 1.0,
             'seed': args.seed,
             'n_block': args.n_block,
-            "use_drop_out": args.drop_out,
+            "drop_out": args.drop_out,
             'weighted_sample': args.weighted_sample,
             'opt': args.opt}
 

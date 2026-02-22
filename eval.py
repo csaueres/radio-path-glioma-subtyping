@@ -4,11 +4,6 @@ import torch.nn.functional as F
 
 import os
 import argparse
-import pandas as pd
-from sklearn.preprocessing import label_binarize
-from sklearn.metrics import auc as calc_auc
-
-from dataio.ops import save_pkl, load_pkl
 from utils.utils import *
 from dataio.mm_dataset import get_dataset
 from model.common import get_classifier
@@ -119,12 +114,13 @@ parser.add_argument('--mri_root_dir', type=str, default=None,
 parser.add_argument('--histo_csv', type=str, default='')
 parser.add_argument('--mri_csv', type=str, default='')
 parser.add_argument('--histo_embed_dim', type=int, default=1536)
+parser.add_argument('--mri_embed_dim', type=int, default=1536,help='size of the MRI patch/slice embeddings')
 parser.add_argument('--k', type=int, default=5, help='number of folds (default: 5)')
 parser.add_argument('--patch_frac',type=float,default=1.0,help='random patches per case')
 parser.add_argument('--mri_context_width',type=int,default=0,help='number of additional slices of mri centered around center of mass (max 5)')
 parser.add_argument('--model_type', type=str,default="moe-mamba")
-parser.add_argument('--mri_embedder', type=str, default='mm-dino', 
-                    help='currently only mm-dino supported')
+parser.add_argument('--mri_embedder', type=str, default='default', 
+                    help='options=[default,]. Different preprocessing pipelines for different MRI encoders.')
 parser.add_argument('--n_heads', type=int, default=1, help='How many output scenarios to evaluate model on. Use 1 for unimodal models and 3 for bimodal models.')
 parser.add_argument('--load_data_in_mem', action='store_true', default=False, help='whether to load all Histo Features in memory (requires 100GB+ RAM)')
 args = parser.parse_args()

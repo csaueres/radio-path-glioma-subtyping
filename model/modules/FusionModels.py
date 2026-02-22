@@ -9,12 +9,12 @@ import math
 
 
 class AbstractEarlyFusion(nn.Module):
-    def __init__(self, in_dim, n_classes, dropout, n_layer, multi_out=True):
+    def __init__(self, histo_dim,mri_dim, n_classes, dropout, n_layer, multi_out=True):
         super().__init__()
         self.multi_out=multi_out
         self.shared_size = 16
-        self.histo_adapter = nn.Linear(in_dim, self.shared_size)
-        self.mri_adapter = nn.Linear(self.mri_dim_in,self.shared_size)
+        self.histo_adapter = nn.Linear(histo_dim, self.shared_size)
+        self.mri_adapter = nn.Linear(mri_dim,self.shared_size)
         self.shared_expert=None
         #self.class_head = nn.Linear(self.shared_size,n_classes)
         self.class_head = nn.Sequential(nn.Dropout(dropout),nn.Linear(self.shared_size, 64),nn.ReLU(),nn.Linear(64, n_classes))
@@ -30,9 +30,8 @@ class AbstractEarlyFusion(nn.Module):
         return histo_logits,mri_logits,joint_logits
 
 class SequenceEarlyFusion(AbstractEarlyFusion):
-    def __init__(self, in_dim, n_classes, dropout, n_layer):
-        self.mri_dim_in = 768
-        super().__init__(in_dim, n_classes, dropout)
+    def __init__(self, histo_dim,mri_dim, n_classes, dropout, n_layer):
+        super().__init__(histo_dim,mri_dim, n_classes, dropout)
         self.shared_expert=MambaMIL(self.shared_size, dropout,n_layer)
 
     def combine_modalities(self,histo_h,mri_h):
@@ -57,9 +56,8 @@ class SequenceEarlyFusion(AbstractEarlyFusion):
         return out,  attn_dic
 
 class LinearEarlyFusion(AbstractEarlyFusion):
-    def __init__(self, in_dim, n_classes, dropout, n_layer):
-        self.mri_dim_in = 1536
-        super().__init__(in_dim, n_classes, dropout)
+    def __init__(self, histo_dim, mri_dim, n_classes, dropout, n_layer):
+        super().__init__(histo_dim, mri_dim, n_classes, dropout)
         self.shared_expert = nn.Sequential(nn.ReLU(),nn.Linear(self.shared_size,self.shared_size))
 
     #early fusion implemented with meaning
@@ -74,11 +72,11 @@ class LinearEarlyFusion(AbstractEarlyFusion):
 #abstract implementation of a late fusion network with unimodal and fused heads
 #dont instantiate
 class AbstractTripleHeadNet(nn.Module):
-    def __init__(self, in_dim, n_classes, dropout, n_layer):
+    def __init__(self, histo_dim, mri_dim, n_classes, dropout, n_layer):
         super().__init__()
         self.multi_out=True
-        self.histo_adapter = nn.Linear(in_dim, self.histo_dim_out)
-        self.mri_adapter = nn.Linear(self.mri_dim_in,self.mri_dim_out)
+        self.histo_adapter = nn.Linear(histo_dim, self.histo_dim_out)
+        self.mri_adapter = nn.Linear(mri_dim,self.mri_dim_out)
         self.histo_expert = None
         self.mri_expert = None
         self.norm = nn.BatchNorm1d(self.histo_dim_out+self.mri_dim_out)
@@ -113,11 +111,11 @@ class AbstractTripleHeadNet(nn.Module):
 
 
 class LinearTripleHead(AbstractTripleHeadNet):
-    def __init__(self, in_dim, n_classes, dropout):
+    def __init__(self, histo_dim, mri_dim, n_classes, dropout):
         self.mri_dim_in = 1536
         self.mri_dim_out = 64
         self.histo_dim_out = 64
-        super().__init__(in_dim, n_classes, dropout)
+        super().__init__(histo_dim, mri_dim, n_classes, dropout)
         self.histo_expert = nn.Sequential(nn.ReLU(),nn.Linear(self.histo_dim_out,self.histo_dim_out))
         self.mri_expert = nn.Sequential(nn.ReLU(),nn.Linear(self.mri_dim_out,self.mri_dim_out))
     def forward(self,histo_x,mri_x):
@@ -126,21 +124,21 @@ class LinearTripleHead(AbstractTripleHeadNet):
 
 #expects sequence of patches for both
 class MambaTripleHead(AbstractTripleHeadNet):
-    def __init__(self, in_dim, n_classes, dropout, n_layer):
-        self.histo_dim_in = in_dim
-        self.mri_dim_in = 768
+    def __init__(self, histo_dim, mri_dim, n_classes, dropout, n_layer):
+        self.histo_dim_in = histo_dim
+        self.mri_dim_in = mri_dim
         self.mri_dim_out = 64
         self.histo_dim_out = 64
-        super().__init__(in_dim, n_classes, dropout)
+        super().__init__(histo_dim, mri_dim, n_classes, dropout)
         self.histo_expert=MambaMIL(self.histo_dim_out, dropout,n_layer/2)
         self.mri_expert=MambaMIL(self.mri_dim_out, dropout,n_layer/2)
 
 #To address reviewer comment
 class LogitLevelFusion(nn.Module):
-    def __init__(self, in_dim, n_classes, dropout, n_layer):
+    def __init__(self, histo_dim, mri_dim, n_classes, dropout, n_layer):
         self.multi_out=False
-        self.histo_dim_in = in_dim
-        self.mri_dim_in = 768
+        self.histo_dim_in = histo_dim
+        self.mri_dim_in = mri_dim
         super().__init__()
         self.histo_model=HistoOnlyMamba(self.histo_dim_in,n_classes,dropout,n_layer/2)
         self.mri_model=MRIOnlyMamba(self.mri_dim_in,n_classes,dropout,n_layer/2)

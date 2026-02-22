@@ -23,29 +23,29 @@ def get_classifier(args):
     classification_loss = WeightedCombinedLosses(losses, weights)
     contrastive_loss = None
     if(args.model_type=='early-fusion_mamba'):
-        model = SequenceEarlyFusion(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
+        model = SequenceEarlyFusion(histo_dim = args.histo_embed_dim, mri_dim=args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='early-fusion_mlp'):
-        model = LinearEarlyFusion(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
+        model = LinearEarlyFusion(histo_dim = args.histo_embed_dim, mri_dim=args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
     # elif(args.model_type=='linear1h'):
     #     model = LinearFusion(in_dim = args.embed_dim, n_classes=args.n_class, dropout=args.drop_out)
     elif(args.model_type=='late-fusion3h_mlp'):
-        model = LinearTripleHead(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
+        model = LinearTripleHead(histo_dim = args.histo_embed_dim, mri_dim=args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
     elif(args.model_type=='late-fusion3h_mamba'):
-        model = MambaTripleHead(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
+        model = MambaTripleHead(histo_dim = args.histo_embed_dim, mri_dim=args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='logit-fusion_mamba'):
-        model = LogitLevelFusion(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
+        model = LogitLevelFusion(histo_dim = args.histo_embed_dim, mri_dim=args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='moe_mlp'):
-        model = MoE(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out,n_layer=1, linear=True)
+        model = MoE(histo_dim = args.histo_embed_dim, mri_dim=args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out,n_layer=1, linear=True)
     elif(args.model_type=='moe_mamba'):
-        model = MoE(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer, linear=False)
+        model = MoE(histo_dim = args.histo_embed_dim, mri_dim=args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer, linear=False)
     elif(args.model_type=='histo_mamba'):
         model = HistoOnlyMamba(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='mri_mamba'):
-        model = MRIOnlyMamba(in_dim = 768, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
+        model = MRIOnlyMamba(in_dim = args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out, n_layer=args.n_layer)
     elif(args.model_type=='histo_mlp'):
         model = HistoMLP(in_dim = args.histo_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
     elif(args.model_type=='mri_mlp'):
-        model = MRIMLP(in_dim = 1536, n_classes=args.n_class, dropout=args.drop_out)
+        model = MRIMLP(in_dim = args.mri_embed_dim, n_classes=args.n_class, dropout=args.drop_out)
     else:
         raise NotImplementedError("No such model type :", args.model_type)
     return model, classification_loss, contrastive_loss

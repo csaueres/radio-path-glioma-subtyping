@@ -8,19 +8,15 @@ from utils.utils import device
 
 
 class MoE(nn.Module):
-    def __init__(self, in_dim, n_classes, dropout, n_layer, linear):
+    def __init__(self, histo_dim, mri_dim, n_classes, dropout, n_layer, linear):
         super().__init__()
         self.multi_out=True
         self.linear = linear
-        if(linear):
-            self.mri_dim_in = 1536
-        else:
-            self.mri_dim_in = 768
-        self.shared_size=64
+        self.shared_size=16
         self.expert_out_dim=64
 
-        self.histo_adapter = nn.Linear(in_dim, self.shared_size)
-        self.mri_adapter = nn.Linear(self.mri_dim_in,self.shared_size)
+        self.histo_adapter = nn.Linear(histo_dim, self.shared_size)
+        self.mri_adapter = nn.Linear(mri_dim,self.shared_size)
 
         if(self.linear):
             self.histo_expert=nn.Sequential(nn.ReLU(),nn.Linear(self.shared_size, self.expert_out_dim))

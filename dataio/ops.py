@@ -3,32 +3,26 @@ import numpy as np
 import pickle
 import h5py
 import torch
-
-import pandas as pd
-import random
 import time
 
-def load_histo_features(data_dir,slide_id,embedder,aug):
+def load_histo_features(data_dir,slide_id,aug):
 	full_path = os.path.join(data_dir,aug,'h5_files','{}.h5'.format(slide_id))
 	try:
 		with h5py.File(full_path,'r') as hdf5_file:
 			features = hdf5_file['features'][:]
-			coords = None #hdf5_file['coords'][:]
 	except Exception as e:
 		print(f"caught Exception on slide {slide_id}: {e}")
 		raise FileExistsError(f"file {full_path} likely doesnt exist")
 
 	return features
 
-def preload_histo_features(data_dir,samples,embedder,aug):
+def preload_histo_features(data_dir,samples,aug):
 	t0=time.time()
 	feature_dic = {}
-	# exp_dic = {}
 	i=0
 	for s in samples:
-		feats = load_histo_features(data_dir,s,embedder,aug)
+		feats = load_histo_features(data_dir,s,aug)
 		feature_dic[s]=feats
-		# exp_dic[s]=torch.as_tensor(feats,dtype=torch.bfloat16)
 		i+=1
 		if(i%100==0):
 			print(i)
@@ -54,14 +48,14 @@ def preload_mri_features(data_dir,samples,embedder='mm-dino',n_surround_slices=0
 	feature_dic = {}
 	if(embedder=='none'):
 		return
-	elif(embedder=='mm-dino'):
+	elif(embedder=='default'):
 		handle = torch.load(os.path.join(data_dir,"mm-dino.pth"))
 		#possibly given in this format
 		try:
 			subjects = handle["id"]['train'] + handle["id"]['val']+ handle["id"]['test']
 			patch_and_tumor_embeds = torch.cat([handle["features"]['train'],handle["features"]['val'],handle["features"]['test']],dim=0)
 		except Exception as e:
-			subjects = handle["id"]
+			subjects = handle["ids"]
 			patch_and_tumor_embeds = handle["features"]
 		print("Shape:", patch_and_tumor_embeds.shape)
 		patch_features = patch_and_tumor_embeds[:,0:,:]
