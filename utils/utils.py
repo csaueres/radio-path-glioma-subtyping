@@ -51,7 +51,9 @@ def get_split_loader(split_dataset, training = False, weighted = False):
 	"""
 		return either the validation loader or training loader 
 	"""
-	kwargs = {'num_workers': 4, 'pin_memory':True} if device.type == "cuda" else {}
+	#kwargs = {'num_workers': 4, 'pin_memory':True} if device.type == "cuda" else {}
+	#May need to adjust parameters on low-memory machines
+	kwargs = {'num_workers': 2, 'pin_memory':False}
 	if training:
 		if weighted:
 			weights = make_balanced_sample_weights(split_dataset)
