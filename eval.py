@@ -121,6 +121,7 @@ parser.add_argument('--mri_context_width',type=int,default=0,help='number of add
 parser.add_argument('--model_type', type=str,default="moe-mamba")
 parser.add_argument('--mri_embedder', type=str, default='default', 
                     help='options=[default,]. Different preprocessing pipelines for different MRI encoders.')
+parser.add_argument('--n_block', type=int, default=24,help='number of mamba blocks to include in the model')
 parser.add_argument('--n_heads', type=int, default=1, help='How many output scenarios to evaluate model on. Use 1 for unimodal models and 3 for bimodal models.')
 parser.add_argument('--load_data_in_mem', action='store_true', default=False, help='whether to load all WSI features in memory (requires large amounts of RAM)')
 parser.add_argument('--task', type=str,default='idh_1p19q_class', help='classification task to perform.')
@@ -130,7 +131,6 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
     args.n_class=3
-    args.n_block=12
     args.drop_out=0.0
     args.return_attn=False
 

@@ -12,8 +12,8 @@ class MoE(nn.Module):
         super().__init__()
         self.multi_out=True
         self.linear = linear
-        self.shared_size=16
-        self.expert_out_dim=64
+        self.shared_size=64
+        self.expert_out_dim=16
 
         self.histo_adapter = nn.Linear(histo_dim, self.shared_size)
         self.mri_adapter = nn.Linear(mri_dim,self.shared_size)
