@@ -8,6 +8,7 @@ qc_scripts/
 */output/*
 out_temp
 analyze/attn_out
+results
 
 
 #Default config

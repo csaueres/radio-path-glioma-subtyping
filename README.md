@@ -47,6 +47,8 @@ python train.py --lr 5e-5 --patch_frac 2000 --k 10 --seed 7 --max_epochs 30 --lo
 
  MODEL can be any of: early-fusion_mamba, late-fusion3h_mamba, moe_mamba, histo_mamba, mri_mamba. We recommend moe_mamba. See common.py for additional possible models. For patch-sequence (mamba) models using MM-DINOv2 the mri_embedding_dim should be 768, while for patch-mean (linear) models it should be twice that, so 1536. 
 
+ load_data_in_mem should only be passed if enough RAM is present to load the entire dataset into memory.
+
 ### Evaluating Model
 
 ```

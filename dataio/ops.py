@@ -48,8 +48,8 @@ def preload_mri_features(data_dir,samples,embedder='mm-dino',n_surround_slices=0
 	feature_dic = {}
 	if(embedder=='none'):
 		return
-	elif(embedder=='default'):
-		handle = torch.load(os.path.join(data_dir,"mm-dino.pth"))
+	elif(embedder=='default' or embedder=='mm-dino'):
+		handle = torch.load(os.path.join(data_dir,embedder,"mri_features.pth"))
 		#possibly given in this format
 		try:
 			subjects = handle["id"]['train'] + handle["id"]['val']+ handle["id"]['test']
@@ -70,7 +70,7 @@ def preload_mri_features(data_dir,samples,embedder='mm-dino',n_surround_slices=0
 				feature_dic[sample_id]=patch_features[i]
 
 	elif(embedder=='mm-dino-multislice'):
-		handle = torch.load(os.path.join(data_dir,"mm-dino_multislice.pth"))
+		handle = torch.load(os.path.join(data_dir,embedder,"mri_features.pth"))
 		subjects = handle["id"]['train'] + handle["id"]['val']+ handle["id"]['test']
 		patch_and_tumor_embeds = torch.cat([handle["features"]['train'],handle["features"]['val'],handle["features"]['test']],dim=0)
 		print("Shape:", patch_and_tumor_embeds.shape)
@@ -88,23 +88,6 @@ def preload_mri_features(data_dir,samples,embedder='mm-dino',n_surround_slices=0
 			sample_id = subjects[i]
 			if(sample_id in samples):
 				feature_dic[sample_id]=patch_features[i]
-
-	elif(embedder=='brainiac'):
-		handle = np.load(os.path.join(data_dir,"brainiac_features_t1c.npz"))
-		modality_extensions = ["_t1","_t1ce","_t2","_flair"]
-		subjects = handle['subjects'][:,0]
-		token_and_cls_embeds = handle['features']
-		patch_features = torch.as_tensor(token_and_cls_embeds)
-		print(patch_features.shape)
-		#currently only adding flair sequences, since they are last
-		for i in range(len(subjects)):
-			sample_id = subjects[i]
-			# print(sample_id)
-			sample_id = sample_id.split('_')[0]
-			if(sample_id in samples):
-				#could also make list and combine them later, imo better to do in gen if works at all
-				feature_dic[sample_id]=patch_features[i]
-		print(feature_dic.keys())
 	else:
 		raise (NotImplementedError("Unrecognized embedder {embedder}"))
 	print(f"MRI Features Foootprint: {calc_mem_size(feature_dic,l='n')/1000000} MB")

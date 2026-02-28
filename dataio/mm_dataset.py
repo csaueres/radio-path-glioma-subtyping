@@ -99,17 +99,16 @@ class HistoFetcher(ModalityFetcher):
         super().__init__(*args,**kwargs)
         print(f"Sampling {self.patch_frac} patches")
         self.aug='og'
-        self.embedder='gigapath_20x'
         print(f"Sampling {self.patch_frac} patches per slide")
         if(self.in_memory):
             all_slide_ids =self.sample_df['sample_id'].values
-            self.preloaded_slide_features = preload_histo_features(self.data_dir,all_slide_ids,self.embedder,self.aug)
+            self.preloaded_slide_features = preload_histo_features(self.data_dir,all_slide_ids,self.aug)
 
     def _get_by_sid(self,sid):
         if(self.in_memory):
             histo_features = self.preloaded_slide_features[sid]
         else:
-            histo_features = load_histo_features(self.data_dir,sid,self.embedder,self.aug)
+            histo_features = load_histo_features(self.data_dir,sid,self.aug)
         histo_features = as_tensor(histo_features)
         return histo_features
 
