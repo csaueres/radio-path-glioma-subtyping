@@ -7,7 +7,7 @@ from model.modules.MambaMIL import MambaMIL
 #TODO: make these compatible with unimodal datasets
 
 class UnimodalModel(nn.Module):
-    def __init__(self, in_dim, n_classes, dropout, n_layer):
+    def __init__(self, in_dim, n_classes, dropout):
         super().__init__()
         self.multi_out=False
         self.hidden_dim=64

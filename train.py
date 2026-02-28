@@ -45,15 +45,15 @@ parser.add_argument('--mri_root_dir', type=str, default=None,
                     help='data directory')
 parser.add_argument('--histo_embed_dim', type=int, default=1536,help='size of the histology patch embeddings')
 parser.add_argument('--mri_embed_dim', type=int, default=1536,help='size of the MRI patch/slice embeddings')
-parser.add_argument('--max_epochs', type=int, default=200,
-                    help='maximum number of epochs to train (default: 200)')
+parser.add_argument('--max_epochs', type=int, default=30,
+                    help='maximum number of epochs to train (default: 30)')
 parser.add_argument('--n_block', type=int, default=24,help='number of mamba blocks to include in the model')
 parser.add_argument('--lr', type=float, default=1e-4,
                     help='learning rate (default: 0.0001)')
 parser.add_argument('--reg', type=float, default=0.01,
                     help='weight decay (default: 0.01)')
-parser.add_argument('--seed', type=int, default=1, 
-                    help='random seed for reproducible experiment (default: 1)')
+parser.add_argument('--seed', type=int, default=7, 
+                    help='random seed for reproducible experiment (default: 7)')
 parser.add_argument('--k', type=int, default=5, help='number of folds (default: 5)')
 parser.add_argument('--k_start', type=int, default=0, help='what fold to start at')
 parser.add_argument('--results_dir', default='./results', help='results directory (default: ./results)')

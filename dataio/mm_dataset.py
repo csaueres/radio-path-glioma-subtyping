@@ -49,7 +49,7 @@ def get_dataset(args,label_dict):
 
 class ModalityFetcher(Dataset):
     def __init__(self,sample_csv,data_dir,embedder,patch_frac,all_samples_per_case=False,in_memory=False):
-        self.sample_df = pd.read_csv(sample_csv)
+        self.sample_df = pd.read_csv(sample_csv,dtype={'case_id': str})
         self.sample_df.set_index('case_id',inplace=True,drop=True)
         self.sample_df.sort_index(inplace=True)
         self.cases = self.sample_df.index.unique().to_list()
@@ -148,12 +148,12 @@ class MriFetcher(ModalityFetcher):
 
 class MultimodalDataset(Dataset):
     def __init__(self,case_csv,label_dict,histo_csv,histo_dir,histo_patch_frac,mri_csv,mri_dir,mri_embedder,mri_slices,in_memory):
-        case_data = pd.read_csv(case_csv)
+        case_data = pd.read_csv(case_csv, dtype={'case_id': str})
         self.mri_fetcher=MriFetcher(mri_csv,mri_dir,mri_embedder,mri_slices,all_samples_per_case=False,in_memory=True)
         self.histo_fetcher=HistoFetcher(histo_csv,histo_dir,'gigapath_20x',histo_patch_frac,all_samples_per_case=True,in_memory=in_memory)
         print("Histo Dataset Loaded in Memory: ",in_memory)
         self.case_data = df_prep(case_data,label_dict)
-        # print(self.case_data.to_string())
+        #print(self.case_data.to_string())
         self.mod_str = 'mh'
         
 

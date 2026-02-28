@@ -13,6 +13,7 @@ import math
 from itertools import islice
 import collections
 device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
 
 class SubsetSequentialSampler(Sampler):
 	"""Samples elements sequentially from a given list of indices, without replacement.
@@ -71,7 +72,7 @@ def get_optim(model, args):
 		optimizer = optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr, momentum=0.9, weight_decay=args.reg)
 	else:
 		raise NotImplementedError
-	print(optimizer.state_dict()['param_groups'])
+	#print(optimizer.state_dict()['param_groups'])
 	return optimizer
 
 def print_network(net):

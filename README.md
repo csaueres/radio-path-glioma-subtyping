@@ -39,7 +39,7 @@ See metadata for examples.
 ### Training Model
 
 ```
-python train.py --lr 5e-5 --patch_frac 2000 --k 10 --seed 7 --max_epochs 30 --load_data_in_mem \
+python train.py --lr 5e-5 --patch_frac 2000 --k 10 --load_data_in_mem \
  --model_type <MODEL> --mri_embed_dim 768 --histo_embed_dim 1536 --exp_code run1 \
  --results_dir results --case_csv metadata/train_cases.csv --split_dir metadata/splits/train_cases_5f\
  --histo_csv metadata/histo_train.csv --mri_csv metadata/mri_train.csv --histo_root_dir data/histo_features --mri_root_dir data/mri_features
