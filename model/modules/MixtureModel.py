@@ -22,8 +22,8 @@ class MoE(nn.Module):
             self.histo_expert=nn.Sequential(nn.ReLU(),nn.Linear(self.shared_size, self.expert_out_dim))
             self.mri_expert=nn.Sequential(nn.ReLU(),nn.Linear(self.shared_size, self.expert_out_dim))
         else:
-            self.histo_expert=nn.Sequential(nn.Linear(self.shared_size, self.expert_out_dim), MambaMIL(self.expert_out_dim, dropout,n_layer/2))
-            self.mri_expert=nn.Sequential(nn.Linear(self.shared_size, self.expert_out_dim), MambaMIL(self.expert_out_dim, dropout,n_layer/2))
+            self.histo_expert=nn.Sequential(nn.Linear(self.shared_size, self.expert_out_dim), MambaMIL(self.expert_out_dim, dropout,n_layer//2))
+            self.mri_expert=nn.Sequential(nn.Linear(self.shared_size, self.expert_out_dim), MambaMIL(self.expert_out_dim, dropout,n_layer//2))
         self.h_norm = nn.BatchNorm1d(self.expert_out_dim)
         self.m_norm = nn.BatchNorm1d(self.expert_out_dim)
         self.router = nn.Sequential(

@@ -122,7 +122,8 @@ parser.add_argument('--model_type', type=str,default="moe-mamba")
 parser.add_argument('--mri_embedder', type=str, default='default', 
                     help='options=[default,]. Different preprocessing pipelines for different MRI encoders.')
 parser.add_argument('--n_heads', type=int, default=1, help='How many output scenarios to evaluate model on. Use 1 for unimodal models and 3 for bimodal models.')
-parser.add_argument('--load_data_in_mem', action='store_true', default=False, help='whether to load all Histo Features in memory (requires 100GB+ RAM)')
+parser.add_argument('--load_data_in_mem', action='store_true', default=False, help='whether to load all WSI features in memory (requires large amounts of RAM)')
+parser.add_argument('--task', type=str,default='idh_1p19q_class', help='classification task to perform.')
 args = parser.parse_args()
 
 
@@ -133,13 +134,23 @@ if __name__ == "__main__":
     args.drop_out=0.0
     args.return_attn=False
 
+    if args.task == 'idh_1p19q_class':
+        args.n_class=3
+        args.label_dict = {'gbm':0, 'astro':1, 'oligo':2}
+    elif args.task == '5way_class':
+        args.n_class=5
+        args.label_dict = {'GBM_MES':0,'GBM_RTK1':1,'GBM_RTK2':2,'ASTRO':3,'OLIGO':4}
+    else:
+        raise NotImplementedError("Please select either idh_1p19q_class or 5way_class or define a new task.")
+
     if(args.model_type=='all'):
-        parser.load_data_in_mem=True
+        args.load_data_in_mem=True
         dataset = get_dataset(args)
         eval_and_save_results_all(args,dataset)
     else:
         dataset = get_dataset(args)
         eval_and_print_results(args,dataset)
+
 
     
 

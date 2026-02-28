@@ -71,7 +71,7 @@ parser.add_argument('--mri_embedder', type=str, default='default',
                     help='options=[default,]. Different preprocessing pipelines for different MRI encoders.')
 parser.add_argument('--exp_code', type=str, help='experiment code for saving results')
 parser.add_argument('--weighted_sample', action='store_true', default=False, help='enable weighted sampling')
-parser.add_argument('--task', type=str,default='idh_1p19q_class', help='classification task to perform.')
+parser.add_argument('--task', type=str,default='idh_1p19q_class', help='classification task to perform (defined below).')
 parser.add_argument('--patch_frac',type=float,default=1.0,help='what fraction of random patches to use for each image for training')
 parser.add_argument('--mri_context_width',type=int,default=0,help='how many additional slices to include on each side of the center slice (0 is only center slice)')
 parser.add_argument('--load_data_in_mem', action='store_true', default=False, help='whether to load all Histo Features in memory (requires 100GB+ RAM)')
@@ -117,7 +117,7 @@ elif args.task == '5way_class':
     label_dict = {'GBM_MES':0,'GBM_RTK1':1,'GBM_RTK2':2,'ASTRO':3,'OLIGO':4}
     dataset = get_dataset(args,label_dict)               
 else:
-    raise NotImplementedError
+    raise NotImplementedError("Please select either idh_1p19q_class or 5way_class or define a new task.")
     
 if not os.path.isdir(args.results_dir):
     os.mkdir(args.results_dir)

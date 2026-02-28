@@ -9,7 +9,7 @@ import h5py
 
 from dataio.ops import *
 
-def get_dataset(args,label_dict):
+def get_dataset(args):
     if(args.histo_csv!='' and args.mri_csv!=''):
         dataset = MultimodalDataset(case_csv = args.case_csv,
                     histo_csv=args.histo_csv,
@@ -17,7 +17,7 @@ def get_dataset(args,label_dict):
                     histo_dir= args.histo_root_dir,
                     mri_dir= args.mri_root_dir,
                     mri_embedder= args.mri_embedder,
-                    label_dict = label_dict,
+                    label_dict = args.label_dict,
                     histo_patch_frac=args.patch_frac,
                     mri_slices=args.mri_context_width,
                     in_memory=args.load_data_in_mem)
@@ -29,7 +29,7 @@ def get_dataset(args,label_dict):
                     mod_dir= args.histo_root_dir,
                     patch_frac = args.patch_frac,
                     mod_embedder= 'gigapath_20x',
-                    label_dict = label_dict,
+                    label_dict = args.label_dict,
                     in_memory=args.load_data_in_mem
         )
     elif(args.mri_csv!=''):
@@ -40,7 +40,7 @@ def get_dataset(args,label_dict):
                     mod_dir= args.mri_root_dir,
                     patch_frac = args.patch_frac,
                     mod_embedder= args.mri_embedder,
-                    label_dict = label_dict,
+                    label_dict = args.label_dict,
                     in_memory=True
         )
     return dataset

@@ -7,6 +7,12 @@ Required packages are listed in env.yml. A conda environment can be created by r
 ```
 conda env create -n mmgs -f env.yml
 ```
+Subsequently run conda activate mmgs to activate the environment.
+Manually install mamba-ssm using the command
+```
+pip install mamba-ssm --no-build-isolation
+```
+
 
 ### Generate Histology Embeddings
 Our pipeline assumes that patch embeddings have been pre-extracted and stored in .h5 files.
@@ -47,14 +53,29 @@ python train.py --lr 5e-5 --patch_frac 2000 --k 10 --load_data_in_mem \
 
  MODEL can be any of: early-fusion_mamba, late-fusion3h_mamba, moe_mamba, histo_mamba, mri_mamba. We recommend moe_mamba. See common.py for additional possible models. For patch-sequence (mamba) models using MM-DINOv2 the mri_embedding_dim should be 768, while for patch-mean (linear) models it should be twice that, so 1536. 
 
- load_data_in_mem should only be passed if enough RAM is present to load the entire dataset into memory.
+ load_data_in_mem should only be passed if enough RAM is present to load the entire dataset into memory. OOM error may also be due to number of workers (see utils/utils.py line 54).
 
 ### Evaluating Model
 
+Evaluating MoE:
 ```
-python eval.py --checkpoint_dir /ckpts/moe-mamba_pretrained.pt --case_csv metadata/test_cases.csv \
-     --model_type <MODEL> --k 10 --patch_frac 1.0 --histo_embed_dim 1536 --n_heads 3 \
-     --histo_csv metadata/histo_test.csv  --histo_root_dir data/wsi \
-     --mri_csv metadata/mri_test.csv --mri_root_dir data/mri --mri_embed_dim 768 \
+python eval.py --checkpoint_dir /ckpts/moe-mamba_pretrained --case_csv metadata/test_cases.csv \
+     --model_type moe_mamba --k 10 --patch_frac 1.0 --n_heads 3 \
+     --histo_csv metadata/histo_test.csv  --histo_root_dir data/wsi --histo_embed_dim 1536 \
+     --mri_csv metadata/mri_test.csv --mri_root_dir data/mri --mri_embed_dim 768 --mri_embedder mm-dino
 ```
-Number of heads is how many output scenarios to evaluate model on. Use 1 for unimodal models and 3 for bimodal models.
+
+Evaluating MRI:
+```
+python eval.py --checkpoint_dir <ckpt_dir> --case_csv metadata/test_cases.csv \
+     --model_type moe_mamba --k 10 --patch_frac 1.0 --n_heads 1 \
+     --mri_csv metadata/mri_test.csv --mri_root_dir data/mri --mri_embed_dim 768 --mri_embedder mm-dino
+```
+
+Evaluating Histology:
+```
+python eval.py --checkpoint_dir <ckpt_dir> --case_csv metadata/test_cases.csv \
+     --model_type histo_mamba --k 10 --patch_frac 1.0 --n_heads 3 \
+     --histo_csv metadata/histo_test.csv  --histo_root_dir data/wsi --histo_embed_dim 1536
+```
+Number of heads is how many output scenarios (histo only, mri only, joint) to evaluate model on. Use 1 for unimodal models and 3 for bimodal models.
